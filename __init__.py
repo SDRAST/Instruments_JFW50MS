@@ -10,12 +10,49 @@ from MonitorControl import ObservatoryError, Device, Switch, show_port_sources
 module_logger = logging.getLogger(__name__)
 
 class MS287(Device):
+  """
+  This is a 24 input by 4 output full matrix switch.
+
+  The switch numbers its ports 1...N.  For Python we convert it to (0...N-1).
+  We can treat it logically as four 24x1 switches.  Some functions apply to the
+  entire physical switch. To avoid repeating them we have a class variable
+  'connection'.  For now, this limits us to one switch of this type in a
+  configuration but we can change it to a dict to support multiple JFW50MS287
+  switches.
+
+  Class Variable
+  ==============
+  connection  - a Telnet instance for the session with the physical switch.
+  host        - assigned by sys admin
+  port        - manufacture's default
+  switch_type - apply as Switch().sw_type.
+  
+  Public attributes
+  =================
+  These additional attributes are added to the Switch() atrributes of sw_type,
+  sources and destinations::
+    - name   - identifier text for switch
+    - switch - switch number = outport number - 1
+    - state  - index into multiports[] to active input port
+  """
   switch_type = "Nx1"
   host = "192.168.100.50"
   port = 3001
   connection = None
 
   def __init__(self, parent, name, inputs=None, output_names=[], active=True):
+    """
+    In most Device types, the first argument is the device providing the
+    signal source.  In the case of a Switch it is the instance which "owns" the
+    switch, which may be an observatory or a telescope.  Use the attribute
+    'sources' to see where the signal comes from.
+    
+    @param observatory : argument to pass to Switch() as the parent
+    @type  observatory : Observatory() instance
+
+    @param swID : logical switch in the matrix, keyed to output port
+    @type  swID : int
+    """
     mylogger = logging.getLogger(module_logger.name+".MS287")
     self.name = name # needed by the next statement
     mylogger.debug(" initializing %s", self)
