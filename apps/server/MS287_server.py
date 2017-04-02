@@ -45,7 +45,7 @@ class MS287_Server(PyroServer, MS287):
     """
     state = int(inp)
     self.channel[str(number)]._set_state(state)
-    return self.channel[str(number)]()
+    return self.get_state(number)
     
   def get_state(self, number):
     """
@@ -70,20 +70,19 @@ def main():
     """
     name = "MS287server"
     
-    p = initiate_option_parser(
-     """Pyro server for MS287 IF switch.""",
-     examples)
+    p = initiate_option_parser("""Pyro server for MS287 IF switch.""",
+                               examples)
     # Add other options here
   
-    opts, args = p.parse_args(sys.argv[1:])
+    args = p.parse_args(sys.argv[1:])
   
     # This cannot be delegated to another module or class
     mylogger = init_logging(logging.getLogger(),
-                            loglevel   = get_loglevel(opts.file_loglevel),
-                            consolevel = get_loglevel(opts.stderr_loglevel),
-                            logname    = opts.logpath+name+".log")
+                            loglevel   = get_loglevel(args.file_loglevel),
+                            consolevel = get_loglevel(args.console_loglevel),
+                            logname    = args.logpath+name+".log")
     mylogger.debug(" Handlers: %s", mylogger.handlers)
-    loggers = set_module_loggers(eval(opts.modloglevels))
+    loggers = set_module_loggers(eval(args.modloglevels))
 
     psl = PyroServerLauncher(name, nameserver_host='dto')
     IFsw = MS287_Server()

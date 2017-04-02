@@ -137,10 +137,10 @@ class MS287(object):
       Sets the state of the switch channel
       """
       command = "SOR%1d %2d" % (self.ID+1,inport)
-      self.logger.debug("set_input: Command sent: %s", command)
+      self.logger.debug("_set_state: Command sent: %s", command)
       response = self.parent.send_request(command)
       inport_str = response.strip().split()[-1]
       inport = int(inport_str.lstrip("#"))
-      self.logger.debug("set_input: Response: %s", inport)
+      self.logger.debug("_set_state: Response: %s", inport)
       self.state = int(inport)-1
       return self.state

@@ -74,6 +74,9 @@ class MS287client(Device):
     self.hw.get_state(switch)
     
   class Channel(Switch):
+    """
+    (I think the only role this plays is to trace signals.
+    """
     def __init__(self, parent, name, inputs=None, output_names=None,
                  active=True):
       self.type = MS287.switch_type
