@@ -64,7 +64,7 @@ class MS287(object):
     try:
       MS287.connection = telnetlib.Telnet(host=MS287.host,
                                                port=MS287.port)
-    except Exception, details:
+    except Exception as details:
       self.logger.error("_connect: Could not connect to MS287: %s",
                      str(details))
       raise ObservatoryError(MS287.host,"did not respond. IF switch is down.")
@@ -94,7 +94,7 @@ class MS287(object):
   def get_states(self):
     """
     """
-    for ch in self.channel.keys():
+    for ch in list(self.channel.keys()):
       self.states[ch] = self.channel[ch]._get_state()
     return self.states
     
